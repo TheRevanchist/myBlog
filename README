@@ -1,3 +1,3 @@
-## Experimenting different libraries for neural networks 
+# H1 Experimenting different libraries for neural networks 
 
 On the last few months, I have been working on Stanford's cs231n course on convolutional neural networks. Needless to say, the course is quite amazing. I will write an article in the near future about how good is the course, and how much I enjoyed it. During the course, I did a lot of coding, implementing different algorithms on neural networks. And now, it is the time to start using different libraries, until I finally decide which one to use for my future research. On this blog, I will explain what my projects are, giving opinions on different algorithms and libraries, and probably some other general stuff. The idea is for each github project that I do, to have some explanation on this blog. A work on tentative, but lets see how it goes.
