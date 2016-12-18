@@ -36,8 +36,8 @@
 <p> Like everyone else, I started with <a href="https://www.tensorflow.org/tutorials/mnist/pros/">the MNIST tutorial </a>.
     And like all great programmers, I started copy pasting the code from the tutorial to my IDE (I highly recommend Spyder),
     trying to understand what the heck is going on. Soon, I saw stuff like this:
-    <xmp> x = tf.placeholder(tf.float32, shape=[None, 784])
-      y_ = tf.placeholder(tf.float32, shape=[None, 10]) </xmp>
+  <xmp> x = tf.placeholder(tf.float32, shape=[None, 784]) </xmp>
+  <xmp> y_ = tf.placeholder(tf.float32, shape=[None, 10]) </xmp>
     with x and y_ apparently not being variables, but being just some 'placeholders' to eventual x and y_. I must admit that
     I have no idea why this makes sense, and why google decided to design things this way, but hey, who am I to question them. </p>
       
@@ -59,8 +59,8 @@
     did was to fix that. Then started experimenting more. I added an another conv layer followed by max pooling (easy peasy),
     and then knowing that 28 can be divided with 2 only twice (and give 0 as a remainder) I added an another conv layer, but
     without pooling this time. Considering that my network started already becoming quite large, I thought that it was time to
-    add some non totally dumb initialization (like initializa weights to small random numbers, be them coming from a unit gaussian
-    or just a gool old uniform distribution). I saw that you can add <a href="https://arxiv.org/pdf/1502.01852v1.pdf">He initialization</a>
+    add some non totally dumb initialization (like initializing weights to small random numbers, be them coming from a unit 
+    gaussian or just a good old uniform distribution). I saw that you can add <a href="https://arxiv.org/pdf/1502.01852v1.pdf">He initialization</a>
     by simply writing:
     <xmp> W_conv1 = tf.get_variable("W_conv1", shape=[width_filter_1, height_filter_1, depth_filter_1,
           number_of_filters_1],
