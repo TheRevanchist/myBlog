@@ -20,8 +20,75 @@
 
     <section class="main-content">
       <h3>
-<a id="Starting with Tensorflow" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Experimenting different libraries for neural networks</h3>
+<a id="Starting with Tensorflow" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Starting with Tensorflow</h3>
 
 <p> I experimented with Tensorflow in the last couple of days (hey, weekends are useful after all). My initial feeling is that
     it looks more like I am doing R coding than Python coding. You have a problem, you google the function that solves it, you
-    copy paste it, and hey voila, everything works. </p>
+    copy paste it, and hey voila, everything works. I think that it is very easy to lose yourself on it, because there is just
+    too many stuff that you have to learn (like what function to use for different things) in addition to Tensorflow fully 
+    using the concepts of graphs. And did I mention that debugging it is a bit terrible?! </p>
+      
+<p> Saying that, it is all not that bad. While I wouldn't recommend Tensorflow to anyone who doesn't already have a decent knowledge
+    of neural networks (lets say on the level of one of the online courses in ANN), and while I would first recommend to do
+    things the hard way by implementing everything from the scratch, for everyone, there will come the time when you must start
+    using one of the high-level libraries. And Tensorflow seems to have a lot of good things, support and a big community. </p>
+      
+<p> Like everyone else, I started with <a href="https://www.tensorflow.org/tutorials/mnist/pros/">the MNIST tutorial </a>.
+    And like all great programmers, I started copy pasting the code from the tutorial to my IDE (I highly recommend Spyder),
+    trying to understand what the heck is going on. Soon, I saw stuff like this:
+    <xmp> x = tf.placeholder(tf.float32, shape=[None, 784])
+          y_ = tf.placeholder(tf.float32, shape=[None, 10]) </xmp>
+    with x and y_ apparently not being variables, but being just some 'placeholders' to eventual x and y_. I must admit that
+    I have no idea why this makes sense, and why google decided to design things this way, but hey, who am I to question them. </p>
+      
+<p> Things became even weirder when I defined my loss function and optimizer. Seriously, all you need to define your loss 
+    function, it was to write:
+    <xmp> cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=[1])) </xmp>
+    and in order to train the network you have to write:
+    <xmp> train_step = tf.train.AdamOptimizer(3e-4).minimize(cross_entropy) </xmp>
+    This is undoubdetly, the strongest alchemy I did since I discovered for loops a lifetime ago. </p>
+
+<p> Anyway, adding another few one-liners, like multiplying a couple of matrices (same as in numpy), doing the softmax function
+    (same as in scikit-learn), adding the session (you have to do it) and voila, I had a dumb softmax regression that gave me
+    8% error rate in MNIST dataset. And I wrote it literally in less time than I wrote this post here. Hey, I am powerful
+    (or at least Tensorflow is). Similarly, I continued the adventure on building a fully connected ANN with a single hidden
+    layer, where I just extended some of the code I wrote for the softmax regression, and then copy-pasted the CNN code in the
+    tutorial to build a CNN which was far inferior to the one I built on Python a few weeks ago. </p>
+
+<p> And then, the real fun began. Googlers apparently hate to comment code, and love hard coded values, so the first thing I
+    did was to fix that. Then started experimenting more. I added an another conv layer followed by max pooling (easy peasy),
+    and then knowing that 28 can be divided with 2 only twice (and give 0 as a remainder) I added an another conv layer, but
+    without pooling this time. Considering that my network started already becoming quite large, I thought that it was time to
+    add some non totally dumb initialization (like initializa weights to small random numbers, be them coming from a unit gaussian
+    or just a gool old uniform distribution). I saw that you can add <a href="https://arxiv.org/pdf/1502.01852v1.pdf">He initialization</a>
+    by simply writing:
+    <xmp> W_conv1 = tf.get_variable("W_conv1", shape=[width_filter_1, height_filter_1, depth_filter_1,
+          number_of_filters_1],
+          initializer=tf.contrib.layers.variance_scaling_initializer()) </xmp>
+    with the emphasis being into the :
+    <xmp> initializer=tf.contrib.layers.variance_scaling_initializer() </xmp>
+    part. And then I saw that adding batch normalization is as simple as writing:
+    <xmp> x_image_bn = tf.contrib.layers.batch_norm(x_image) </xmp>
+    This is crazy! While understanding the <a href="https://arxiv.org/pdf/1502.03167v3.pdf">Ioffe and Szegedy </a> brilliant paper
+    was relatively easy, coding the back-prop of batch normalization was far from trivial, it became worse if you wanted to
+    code it all in a single step, and a nightmare when you had to do spatial batch-norm. But hey, that is now a thing for the
+    newbies, all the cool guys use tensorflow and do that in a single line of tensorflow code. If that wasn't cool enough,
+    I saw that you can add <a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf">dropout </a> similarly with an 
+    one liner:
+    <xmp> h_pool1_drop = tf.nn.dropout(h_pool1, keep_prob) </p>
+    because why not?! To my disappointment, I saw that adding dropout makes things slightly worse if I train for only 2000
+    iterations, and just a tiny bit better if I train for 4000 iterations. I will need to try it for more iterations just
+    to see if anything changes, but the authors of batch normalization saw that dropout becomes almost unneeded if you use
+    batch normalization (and well, everyone should use batch norm).
+      </p>
+
+<p> To conclude this, I still feel like Alice in the Wonderland when I am using Tensorflow, I spent most of the time looking
+    for solutions instead of coding them, and I made a CNN that gave me less than 1% error rate on MNIST in less than 2 hours
+    (I needed more than a week to do the same while I was using just python and numpy). This is kind of cool, and I am feeling
+    like a superman, but at the same time, I have been using algorithms that I am completely familiar with, and I have been
+    doing pretty basic stuff. Lets see how things go when I am doing mroe complicated things, or when I am doing research and
+    get a million errors, and I have no idea why they are happening. </p>
+
+
+      
+      
