@@ -75,7 +75,7 @@
     newbies, all the cool guys use tensorflow and do that in a single line of tensorflow code. If that wasn't cool enough,
     I saw that you can add <a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf">dropout </a> similarly with an 
     one liner:
-    <xmp> h_pool1_drop = tf.nn.dropout(h_pool1, keep_prob) </p>
+    <xmp> h_pool1_drop = tf.nn.dropout(h_pool1, keep_prob) </xmp>
     because why not?! To my disappointment, I saw that adding dropout makes things slightly worse if I train for only 2000
     iterations, and just a tiny bit better if I train for 4000 iterations. I will need to try it for more iterations just
     to see if anything changes, but the authors of batch normalization saw that dropout becomes almost unneeded if you use
