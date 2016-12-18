@@ -25,19 +25,19 @@
 <p> I experimented with Tensorflow in the last couple of days (hey, weekends are useful after all). My initial feeling is that
     it looks more like I am doing R coding than Python coding. You have a problem, you google the function that solves it, you
     copy paste it, and hey voila, everything works. I think that it is very easy to lose yourself on it, because there is just
-    too many stuff that you have to learn (like what function to use for different things) in addition to Tensorflow fully 
+    too much stuff that you have to learn (like what function to use for different things) in addition to Tensorflow fully 
     using the concepts of graphs. And did I mention that debugging it is a bit terrible?! </p>
       
 <p> Saying that, it is all not that bad. While I wouldn't recommend Tensorflow to anyone who doesn't already have a decent knowledge
     of neural networks (lets say on the level of one of the online courses in ANN), and while I would first recommend to do
-    things the hard way by implementing everything from the scratch, for everyone, there will come the time when you must start
+    things the hard way by implementing everything from the scratch (for everyone) there will come the time when you must start
     using one of the high-level libraries. And Tensorflow seems to have a lot of good things, support and a big community. </p>
       
 <p> Like everyone else, I started with <a href="https://www.tensorflow.org/tutorials/mnist/pros/">the MNIST tutorial </a>.
     And like all great programmers, I started copy pasting the code from the tutorial to my IDE (I highly recommend Spyder),
     trying to understand what the heck is going on. Soon, I saw stuff like this:
     <xmp> x = tf.placeholder(tf.float32, shape=[None, 784])
-          y_ = tf.placeholder(tf.float32, shape=[None, 10]) </xmp>
+      y_ = tf.placeholder(tf.float32, shape=[None, 10]) </xmp>
     with x and y_ apparently not being variables, but being just some 'placeholders' to eventual x and y_. I must admit that
     I have no idea why this makes sense, and why google decided to design things this way, but hey, who am I to question them. </p>
       
