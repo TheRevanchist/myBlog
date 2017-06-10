@@ -36,6 +36,74 @@
   representation of an autoencoder looks: </p>
   
   <img src="autoencoder.png" alt="A simple autoencoder" align="middle" title="A simple autoencoder">
+      
+<p> Of course, knowing that going deeper is better, it is possible to not limite the network on a single hidden layer. You 
+  can go as deep as you want. A simple two layer autoencoder looks: </p>
+  
+  <img src="autoencoders2.png" alt="A simple autoencoder" align="middle" title="A simple two layer autoencoder">
+  
+<p> In fact, it is possible to change the architecture of the network to something more interesting,
+  like a convolutional neural network. While, I am not going to cover today the Convolutional Autoencoder, it is essentially
+  the same thing as a normal CNN, but instead of putting a final layer where you do some classification, you put a final
+  layer that maps input to output (here is the auto in the autoencoder). A lot of knowledge from the usual neural nets
+  can be transferred here. Obviously, we are not interested in the output (after all, in the best case, it is the same as the input), but we might be interested in the hidden representation, and
+  at times, the features there might be better features than the original ones. </p>
+      
+<p> Enough with words though, let's see how things go in the code. We are going to use the MNIST dataset for this
+  experiment. First, we do the neccessary imports and load the dataset: </p>  
+      
+<xmp> 
+from __future__ import division, print_function, absolute_import
+
+import tensorflow as tf
+import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Import MNIST data
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("MNIST_data", one_hot=True) </xmp> 
+      
+<p> Then, we define the parameters for the learning rate, number of epochs we are going to train the network, the batch size
+  and finally we define a placeholder for the dropout. </p>
+
+<xmp>      
+# initialize some parameters needed during the training
+learning_rate = 3e-4
+training_epochs = 20
+batch_size = 128
+display_step = 1
+examples_to_show = 10
+keep_prob = tf.placeholder(tf.float32)  </xmp> 
+      
+<p> Next, we define the number of units for each layer. MNIST images size are 28 by 28, so we have 784 units in the input
+  layer, we arbitrarily decided to have 2048 units in the first hidden layer and 256 neuros in the second hidden layer. The
+  numbers here are totally arbitrary, and for best results, it is needed to tune these parameters using a validation set. Then,
+  we define and initialize the weights and biases of the net. </p>
+      
+<xmp>
+# initialize tensorflow graph and the weights and biases of the neural network
+X = tf.placeholder("float", [None, number_input_layer])
+regularizer = tf.contrib.layers.l2_regularizer(scale=0.00)
+
+weights = {
+    'encoder_h1': tf.get_variable('WE', shape=[number_input_layer, number_hidden_layer1], regularizer=regularizer),
+    'encoder_h2': tf.get_variable('WE2', shape=[number_hidden_layer1, number_hidden_layer2], regularizer=regularizer),   
+    'decoder_h1': tf.get_variable('WD', shape=[number_hidden_layer2, number_hidden_layer1], regularizer=regularizer),
+    'decoder_h2': tf.get_variable('WD2', shape=[number_hidden_layer1, number_input_layer], regularizer=regularizer)
+}
+
+biases = {
+    'encoder_b1': tf.Variable(tf.random_normal([number_hidden_layer1])),
+    'encoder_b2': tf.Variable(tf.random_normal([number_hidden_layer2])),    
+    'decoder_b1': tf.Variable(tf.random_normal([number_hidden_layer1])),
+    'decoder_b2': tf.Variable(tf.random_normal([number_input_layer]))
+  } </xmp>
+      
+      
+
 
 
     
