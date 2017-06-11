@@ -160,6 +160,47 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)
 # initialize the variables and launch the graph
 init = tf.global_variables_initializer() </xmp>
       
+<p> All that remains is training the neural network. On Tensorflow, that means definind the session, number of epochs and
+  finally providing the training data and the dropout parameter (which we defined as placeholders where we defined the
+  graph. We also save the internal representation of the final encoder layer. </p>
+      
+<xmp>
+with tf.Session() as sess:
+    sess.run(init)
+    total_batch = int(mnist.train.num_examples/batch_size)
+    # Training cycle
+    for epoch in range(training_epochs):
+        # Loop over all batches
+        for i in range(total_batch):
+            batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+            # Run optimization op (backprop) and cost op (to get loss value)
+            _, c = sess.run([optimizer, loss], feed_dict={X: batch_xs, keep_prob: 0.5})
+        # Display logs per epoch step
+        if epoch % display_step == 0:
+            print("Epoch:", '%04d' % (epoch+1), "cost=", "{:.9f}".format(c))
+
+    print("Optimization Finished!")
+    
+    # Applying encode and decode over test set
+    encode_decode = sess.run(y_hat, feed_dict={X: mnist.test.images[:examples_to_show], keep_prob: 1})
+    features = encoder_op.eval(feed_dict={X: batch_xs, keep_prob: 1}) </xmp>  
+      
+<p> We look at the visual representation of the net. If the output looks quite similar to the input, than we have done
+  a good job. </p>
+ 
+<img src="digits.jpg" alt="On the first row are the original images, on the second row are the reconstructed images" align="middle" title="On the first row are the original images, on the second row are the reconstructed images">  
+      
+<p> The results seem very good and you can hardly find the difference between the original images and the reconstructed ones.
+  However, when I tried to do k-means clustering, I still found that the results were slightly better if we use the original pixels,
+  rather than the features from the encoder network. This comes a bit as a surprise to me, but to be fair, autoencoders are
+  not exactly like CNN where you can get great results without doing much work. I think that in order to get good results
+  in this experiment, a convolutional autoencoder is needed. And even there, the results can be not as impressive as we
+  would hope for, which at the moment makes the usefuleness of autoencoders a bit dubious. </p>
+      
+      
+      
+     
+      
       
       
       
