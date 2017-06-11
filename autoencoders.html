@@ -81,12 +81,13 @@ keep_prob = tf.placeholder(tf.float32)  </xmp>
 <p> Next, we define the number of units for each layer. MNIST images size are 28 by 28, so we have 784 units in the input
   layer, we arbitrarily decided to have 2048 units in the first hidden layer and 256 neuros in the second hidden layer. The
   numbers here are totally arbitrary, and for best results, it is needed to tune these parameters using a validation set. Then,
-  we define and initialize the weights and biases of the net. </p>
+  we define and initialize the weights and biases of the net. We also define a l2 regularizer (the scale of it should
+  be tuned using a validation set. </p>
       
 <xmp>
 # initialize tensorflow graph and the weights and biases of the neural network
 X = tf.placeholder("float", [None, number_input_layer])
-regularizer = tf.contrib.layers.l2_regularizer(scale=0.00)
+regularizer = tf.contrib.layers.l2_regularizer(scale=0.001)
 
 weights = {
     'encoder_h1': tf.get_variable('WE', shape=[number_input_layer, number_hidden_layer1], regularizer=regularizer),
@@ -101,6 +102,66 @@ biases = {
     'decoder_b1': tf.Variable(tf.random_normal([number_hidden_layer1])),
     'decoder_b2': tf.Variable(tf.random_normal([number_input_layer]))
   } </xmp>
+      
+<p> Now, we go to the main part. We define a function for the encoder and the decoder. They are symmetric functions, where
+  the decoder function can be thought as the inverse of the encoder function. An interesting thing that I found, is that
+  it seems that it is hard to make autoencoders work with hyperbolic tangent and the ReLU (and ReLU-like) activation
+  functions. I don't have a good explanation for it right now, it just seems to not work straightforward. There are papers
+  that deal with the situtaion, and Yoshua Bengio's lab reported that they made autoencoders work with the ReLU function.
+  Anyway, in the code, the encoder/decoder functions is quite simple, you multiply the vector of neurons with the matrix
+  of weights, add the bias term and apply a nonlinear activation function. Seems simple. </p>
+      
+<xmp> 
+# Building the encoder
+def encoder(x):
+    # Encoder Hidden layer with sigmoid activation #1
+    layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(x, weights['encoder_h1']),
+                                   biases['encoder_b1']))
+    layer_1_batch_norm = tf.contrib.layers.batch_norm(layer_1)
+    h_fc1_drop = tf.nn.dropout(layer_1_batch_norm, keep_prob)
+    
+    # Decoder Hidden layer with sigmoid activation #2
+    layer_2 = tf.nn.sigmoid(tf.add(tf.matmul(layer_1_batch_norm, weights['encoder_h2']),
+                                   biases['encoder_b2']))
+    return layer_2
+    
+# Building the decoder
+def decoder(x):
+    # Encoder Hidden layer with sigmoid activation #1
+    layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(x, weights['decoder_h1']),
+                                   biases['decoder_b1']))
+
+    layer_1_batch_norm = tf.contrib.layers.batch_norm(layer_1)
+    h_fc1_drop = tf.nn.dropout(layer_1_batch_norm, keep_prob)
+
+
+    # Decoder Hidden layer with sigmoid activation #2
+    layer_2 = tf.nn.sigmoid(tf.add(tf.matmul(layer_1_batch_norm, weights['decoder_h2']),
+                                   biases['decoder_b2']))
+    return layer_2 </xmp>  
+      
+<p> We continue by defining the model, the loss function and the optimizer. For loss function, we choose the least square
+  loss function. Considering that we are trying to predict values that can take place in a large range of values, the least
+  square cost function makes perfect sense. Finally, for the optimizer, we choose the Adam optimizer (my default choice for
+  everything in neural networks) with 3e-4 learning rate and the other default parameters. </p>
+      
+ <xmp>
+# the model
+encoder_op = encoder(X)
+decoder_op = decoder(encoder_op)
+
+y_hat = decoder_op
+y = X
+
+# define loss function and minimize it
+loss = tf.reduce_mean(tf.pow(y - y_hat, 2))
+optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)
+
+# initialize the variables and launch the graph
+init = tf.global_variables_initializer() </xmp>
+      
+      
+      
       
       
 
